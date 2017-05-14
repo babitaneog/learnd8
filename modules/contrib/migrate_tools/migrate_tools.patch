@@ -1,0 +1,840 @@
+diff --git a/modules/contrib/migrate_tools/migrate_tools.drush.inc b/modules/contrib/migrate_tools/migrate_tools.drush.inc
+index 9a6e965..54acb7b 100644
+--- a/modules/contrib/migrate_tools/migrate_tools.drush.inc
++++ b/modules/contrib/migrate_tools/migrate_tools.drush.inc
+@@ -5,15 +5,14 @@
+  * Command-line tools to aid performing and developing migrations.
+  */
+ 
+-use Drupal\Component\Plugin\Exception\PluginException;
+-use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+ use Drupal\Component\Utility\Unicode;
+-use Drupal\Core\Database\ConnectionNotDefinedException;
+ use Drupal\migrate\Exception\RequirementsException;
+ use Drupal\migrate\Plugin\MigrationInterface;
++use Drupal\migrate\Plugin\RequirementsInterface;
+ use Drupal\migrate_tools\MigrateExecutable;
+ use Drupal\migrate_tools\DrushLogMigrateMessage;
+ use Drupal\Core\Datetime\DateFormatter;
++use Drupal\migrate_plus\Entity\MigrationGroup;
+ 
+ /**
+  * Implements hook_drush_command().
+@@ -22,7 +21,8 @@ function migrate_tools_drush_command() {
+   $items['migrate-status'] = [
+     'description' => 'List all migrations with current status.',
+     'options' => [
+-      'group' => 'Name of the migration group to list',
++      'group' => 'A comma-separated list of migration groups to list',
++      'tag' => 'Name of the migration tag to list',
+       'names-only' => 'Only return names, not all the details (faster)',
+     ],
+     'arguments' => [
+@@ -31,7 +31,9 @@ function migrate_tools_drush_command() {
+     'examples' => [
+       'migrate-status' => 'Retrieve status for all migrations',
+       'migrate-status --group=beer' => 'Retrieve status for all migrations in a given group',
+-      'migrate-status BeerTerm,BeerNode' => 'Retrieve status for specific migrations',
++      'migrate-status --tag=user' => 'Retrieve status for all migrations with a given tag',
++      'migrate-status --group=beer --tag=user' => 'Retrieve status for all migrations in the beer group and with the user tag',
++      'migrate-status beer_term,beer_node' => 'Retrieve status for specific migrations',
+     ],
+     'drupal dependencies' => ['migrate_tools'],
+     'aliases' => ['ms'],
+@@ -41,7 +43,8 @@ function migrate_tools_drush_command() {
+     'description' => 'Perform one or more migration processes.',
+     'options' => [
+       'all' => 'Process all migrations.',
+-      'group' => 'Name of the migration group to import',
++      'group' => 'A comma-separated list of migration groups to import',
++      'tag' => 'Name of the migration tag to import',
+       'limit' => 'Limit on the number of items to process in each migration',
+       'feedback' => 'Frequency of progress messages, in items processed',
+       'idlist' => 'Comma-separated list of IDs to import',
+@@ -50,14 +53,16 @@ function migrate_tools_drush_command() {
+       'execute-dependencies' => 'Execute all dependent migrations first.',
+     ],
+     'arguments' => [
+-      'migration' => 'Name of migration(s) to import. Delimit multiple using commas.',
++      'migration' => 'ID of migration(s) to import. Delimit multiple using commas.',
+     ],
+     'examples' => [
+       'migrate-import --all' => 'Perform all migrations',
+       'migrate-import --group=beer' => 'Import all migrations in the beer group',
+-      'migrate-import BeerTerm,BeerNode' => 'Import new terms and nodes',
+-      'migrate-import BeerUser --limit=2' => 'Import no more than 2 users',
+-      'migrate-import BeerUser --idlist=5' => 'Import the user record with source ID 5',
++      'migrate-import --tag=user' => 'Import all migrations with the user tag',
++      'migrate-import --group=beer --tag=user' => 'Import all migrations in the beer group and with the user tag',
++      'migrate-import beer_term,beer_node' => 'Import new terms and nodes',
++      'migrate-import beer_user --limit=2' => 'Import no more than 2 users',
++      'migrate-import beer_user --idlist=5' => 'Import the user record with source ID 5',
+     ],
+     'drupal dependencies' => ['migrate_tools'],
+     'aliases' => ['mi'],
+@@ -67,7 +72,8 @@ function migrate_tools_drush_command() {
+     'description' => 'Rollback one or more migrations.',
+     'options' => array(
+       'all' => 'Process all migrations.',
+-      'group' => 'Name of the migration group to rollback',
++      'group' => 'A comma-separated list of migration groups to rollback',
++      'tag' => 'ID of the migration tag to rollback',
+       'feedback' => 'Frequency of progress messages, in items processed',
+     ),
+     'arguments' => array(
+@@ -76,7 +82,9 @@ function migrate_tools_drush_command() {
+     'examples' => array(
+       'migrate-rollback --all' => 'Perform all migrations',
+       'migrate-rollback --group=beer' => 'Rollback all migrations in the beer group',
+-      'migrate-rollback BeerTerm,BeerNode' => 'Rollback imported terms and nodes',
++      'migrate-rollback --tag=user' => 'Rollback all migrations with the user tag',
++      'migrate-rollback --group=beer --tag=user' => 'Rollback all migrations in the beer group and with the user tag',
++      'migrate-rollback beer_term,beer_node' => 'Rollback imported terms and nodes',
+     ),
+     'drupal dependencies' => array('migrate_tools'),
+     'aliases' => array('mr'),
+@@ -85,7 +93,7 @@ function migrate_tools_drush_command() {
+   $items['migrate-stop'] = [
+     'description' => 'Stop an active migration operation.',
+     'arguments' => [
+-      'migration' => 'Name of migration to stop',
++      'migration' => 'ID of migration to stop',
+     ],
+     'drupal dependencies' => ['migrate_tools'],
+     'aliases' => ['mst'],
+@@ -94,7 +102,7 @@ function migrate_tools_drush_command() {
+   $items['migrate-reset-status'] = [
+     'description' => 'Reset a active migration\'s status to idle.',
+     'arguments' => [
+-      'migration' => 'Name of migration to reset',
++      'migration' => 'ID of migration to reset',
+     ],
+     'drupal dependencies' => ['migrate_tools'],
+     'aliases' => ['mrs'],
+@@ -103,7 +111,7 @@ function migrate_tools_drush_command() {
+   $items['migrate-messages'] = [
+     'description' => 'View any messages associated with a migration.',
+     'arguments' => [
+-      'migration' => 'Name of the migration',
++      'migration' => 'ID of the migration',
+     ],
+     'options' => [
+       'csv' => 'Export messages as a CSV'
+@@ -118,7 +126,7 @@ function migrate_tools_drush_command() {
+   $items['migrate-fields-source'] = [
+     'description' => 'List the fields available for mapping in a source.',
+     'arguments' => [
+-      'migration' => 'Name of the migration',
++      'migration' => 'ID of the migration',
+     ],
+     'examples' => [
+       'migrate-fields-source my_node' => 'List fields for the source in the my_node migration',
+@@ -134,22 +142,23 @@ function migrate_tools_drush_command() {
+  * @param string $migration_names
+  */
+ function drush_migrate_tools_migrate_status($migration_names = '') {
+-  $group_name = drush_get_option('group');
+   $names_only = drush_get_option('names-only');
+ 
+-  $migrations = drush_migrate_tools_migration_list($group_name, $migration_names);
++  $migrations = drush_migrate_tools_migration_list($migration_names);
+ 
+   $table = [];
+   // Take it one group at a time, listing the migrations within each group.
+   foreach ($migrations as $group_id => $migration_list) {
++    $group = MigrationGroup::load($group_id);
++    $group_name = !empty($group) ? "{$group->label()} ({$group->id()})" : $group_id;
+     if ($names_only) {
+       $table[] = [
+-        dt('Group: @name', array('@name' => $group_id))
++        dt('Group: @name', array('@name' => $group_name))
+       ];
+     }
+     else {
+       $table[] = [
+-        dt('Group: @name', array('@name' => $group_id)),
++        dt('Group: @name', array('@name' => $group_name)),
+         dt('Status'),
+         dt('Total'),
+         dt('Imported'),
+@@ -168,32 +177,32 @@ function drush_migrate_tools_migrate_status($migration_names = '') {
+           ['@migration' => $migration_id, '@message' => $e->getMessage()]));
+         continue;
+       }
+-      try {
+-        $source_rows = $source_plugin->count();
+-        // -1 indicates uncountable sources.
+-        if ($source_rows == -1) {
+-          $source_rows = dt('N/A');
+-          $unprocessed = dt('N/A');
+-        }
+-        else {
+-          $unprocessed = $source_rows - $map->processedCount();
+-        }
+-      }
+-      catch (Exception $e) {
+-        drush_print($e->getMessage());
+-        drush_log(dt('Could not retrieve source count from @migration: @message',
+-          ['@migration' => $migration_id, '@message' => $e->getMessage()]));
+-        $source_rows = dt('N/A');
+-        $unprocessed = dt('N/A');
+-      }
+-
+       if ($names_only) {
+         $table[] = [$migration_id];
+       }
+       else {
++        try {
++          $source_rows = $source_plugin->count();
++          // -1 indicates uncountable sources.
++          if ($source_rows == -1) {
++            $source_rows = dt('N/A');
++            $unprocessed = dt('N/A');
++          }
++          else {
++            $unprocessed = $source_rows - $map->processedCount();
++          }
++        }
++        catch (Exception $e) {
++          drush_print($e->getMessage());
++          drush_log(dt('Could not retrieve source count from @migration: @message',
++            ['@migration' => $migration_id, '@message' => $e->getMessage()]));
++          $source_rows = dt('N/A');
++          $unprocessed = dt('N/A');
++        }
++
+         $status = $migration->getStatusLabel();
+         $migrate_last_imported_store = \Drupal::keyValue('migrate_last_imported');
+-        $last_imported =  $migrate_last_imported_store->get($migration->id(), FALSE);
++        $last_imported = $migrate_last_imported_store->get($migration->id(), FALSE);
+         if ($last_imported) {
+           /** @var DateFormatter $date_formatter */
+           $date_formatter = \Drupal::service('date.formatter');
+@@ -214,11 +223,12 @@ function drush_migrate_tools_migrate_status($migration_names = '') {
+  * @param string $migration_names
+  */
+ function drush_migrate_tools_migrate_import($migration_names = '') {
+-  $group_name = drush_get_option('group');
++  $group_names = drush_get_option('group');
++  $tag_names = drush_get_option('tag');
+   $all = drush_get_option('all');
+   $options = [];
+-  if (!$all && !$group_name && !$migration_names) {
+-    drush_set_error('MIGRATE_ERROR', dt('You must specify --all, --group, or one or more migration names separated by commas'));
++  if (!$all && !$group_names && !$migration_names && !$tag_names) {
++    drush_set_error('MIGRATE_ERROR', dt('You must specify --all, --group, --tag or one or more migration names separated by commas'));
+     return;
+   }
+ 
+@@ -228,7 +238,10 @@ function drush_migrate_tools_migrate_import($migration_names = '') {
+     }
+   }
+ 
+-  $migrations = drush_migrate_tools_migration_list($group_name, $migration_names);
++  $migrations = drush_migrate_tools_migration_list($migration_names);
++  if (empty($migrations)) {
++    drush_log(dt('No migrations found.'), 'error');
++  }
+ 
+   // Take it one group at a time, importing the migrations within each group.
+   foreach ($migrations as $group_id => $migration_list) {
+@@ -252,16 +265,16 @@ function _drush_migrate_tools_execute_migration(MigrationInterface $migration, $
+ 
+   if (drush_get_option('execute-dependencies')) {
+     if ($required_IDS = $migration->get('requirements')) {
+-      $manager = \Drupal::service('plugin.manager.config_entity_migration');
++      $manager = \Drupal::service('plugin.manager.migration');
+       $required_migrations = $manager->createInstances($required_IDS);
+       $dependency_options = array_merge($options, ['is_dependency' => TRUE]);
+       array_walk($required_migrations, __FUNCTION__, $dependency_options);
+     }
+   }
+-  if ($options['force']) {
++  if (!empty($options['force'])) {
+     $migration->set('requirements', []);
+   }
+-  if ($options['update']) {
++  if (!empty($options['update'])) {
+     $migration->getIdMap()->prepareUpdate();
+   }
+   $executable = new MigrateExecutable($migration, $log, $options);
+@@ -273,11 +286,12 @@ function _drush_migrate_tools_execute_migration(MigrationInterface $migration, $
+  * @param string $migration_names
+  */
+ function drush_migrate_tools_migrate_rollback($migration_names = '') {
+-  $group_name = drush_get_option('group');
++  $group_names = drush_get_option('group');
++  $tag_names = drush_get_option('tag');
+   $all = drush_get_option('all');
+   $options = [];
+-  if (!$all && !$group_name && !$migration_names) {
+-    drush_set_error('MIGRATE_ERROR', dt('You must specify --all, --group, or one or more migration names separated by commas'));
++  if (!$all && !$group_names && !$migration_names && !$tag_names) {
++    drush_set_error('MIGRATE_ERROR', dt('You must specify --all, --group, --tag, or one or more migration names separated by commas'));
+     return;
+   }
+ 
+@@ -287,7 +301,10 @@ function drush_migrate_tools_migrate_rollback($migration_names = '') {
+ 
+   $log = new DrushLogMigrateMessage();
+ 
+-  $migrations = drush_migrate_tools_migration_list($group_name, $migration_names);
++  $migrations = drush_migrate_tools_migration_list($migration_names);
++  if (empty($migrations)) {
++    drush_log(dt('No migrations found.'), 'error');
++  }
+ 
+   // Take it one group at a time, rolling back the migrations within each group.
+   foreach ($migrations as $group_id => $migration_list) {
+@@ -418,35 +435,79 @@ function drush_migrate_tools_migrate_fields_source($migration_id) {
+ /**
+  * Retrieve a list of active migrations.
+  *
+- * @param string $group_id
+- *  Group machine name - if present, return only migrations in this group.
+  * @param string $migration_ids
+  *  Comma-separated list of migrations - if present, return only these migrations.
+  *
+  * @return MigrationInterface[][]
+- *   An array keyed by migration group, each value containing an array of migrations.
++ *   An array keyed by migration group, each value containing an array of
++ *   migrations or an empty array if no migrations match the input criteria.
+  */
+-function drush_migrate_tools_migration_list($group_id = '', $migration_ids = '') {
+-  if (!empty($migration_ids)) {
+-    $migration_ids = explode(',', Unicode::strtolower($migration_ids));
++function drush_migrate_tools_migration_list($migration_ids = '') {
++  // Filter keys must match the migration configuration property name.
++  $filter['migration_group'] = drush_get_option('group') ? explode(',', drush_get_option('group')) : [];
++  $filter['migration_tags'] = drush_get_option('tag') ? explode(',', drush_get_option('tag')) : [];
++
++  $manager = \Drupal::service('plugin.manager.migration');
++  $plugins = $manager->createInstances([]);
++  $matched_migrations = [];
++
++  // Get the set of migrations that may be filtered.
++  if (empty($migration_ids)) {
++    $matched_migrations = $plugins;
+   }
+   else {
+-    $migration_ids = [];
++    // Get the requested migrations.
++    $migration_ids = explode(',', Unicode::strtolower($migration_ids));
++    foreach ($plugins as $id => $migration) {
++      if (in_array(Unicode::strtolower($id), $migration_ids)) {
++        $matched_migrations[$id] = $migration;
++      }
++    }
+   }
+ 
+-  $manager = \Drupal::service('plugin.manager.config_entity_migration');
+-  $plugins = $manager->createInstances([]);
+-  $migrations = [];
+-  foreach ($plugins as $id => $migration) {
+-    $configured_group_id = $migration->get('migration_group');
+-    if (empty($configured_group_id)) {
+-      $configured_group_id = 'default';
++  // Do not return any migrations which fail to meet requirements.
++  /** @var \Drupal\migrate\Plugin\Migration $migration */
++  foreach ($matched_migrations as $id => $migration) {
++    if ($migration->getSourcePlugin() instanceof RequirementsInterface) {
++      try {
++        $migration->getSourcePlugin()->checkRequirements();
++      }
++      catch (RequirementsException $e) {
++        unset($matched_migrations[$id]);
++      }
+     }
+-    if (empty($group_id) || $group_id == $configured_group_id) {
+-      if (empty($migration_ids) || in_array(Unicode::strtolower($id), $migration_ids)) {
+-        $migrations[$configured_group_id][$id] = $migration;
++  }
++
++  // Filters the matched migrations if a group or a tag has been input.
++  if (!empty($filter['migration_group']) || !empty($filter['migration_tags'])) {
++    // Get migrations in any of the specified groups and with any of the
++    // specified tags.
++    foreach ($filter as $property => $values) {
++      if (!empty($values)) {
++        $filtered_migrations = [];
++        foreach ($values as $search_value) {
++          foreach ($matched_migrations as $id => $migration) {
++            // Cast to array because migration_tags can be an array.
++            $configured_values = (array) $migration->get($property);
++            $configured_id = (in_array($search_value, $configured_values)) ? $search_value : 'default';
++            if (empty($search_value) || $search_value == $configured_id) {
++              if (empty($migration_ids) || in_array(Unicode::strtolower($id), $migration_ids)) {
++                $filtered_migrations[$id] = $migration;
++              }
++            }
++          }
++        }
++        $matched_migrations = $filtered_migrations;
+       }
+     }
+   }
+-  return $migrations;
++
++  // Sort the matched migrations by group.
++  if (!empty($matched_migrations)) {
++    foreach ($matched_migrations as $id => $migration) {
++      $configured_group_id = empty($migration->get('migration_group')) ? 'default' : $migration->get('migration_group');
++      $migrations[$configured_group_id][$id] = $migration;
++    }
++  }
++  return isset($migrations) ? $migrations : [];
+ }
+diff --git a/modules/contrib/migrate_tools/migrate_tools.info.yml b/modules/contrib/migrate_tools/migrate_tools.info.yml
+index 72e4c81..9f35d9c 100644
+--- a/modules/contrib/migrate_tools/migrate_tools.info.yml
++++ b/modules/contrib/migrate_tools/migrate_tools.info.yml
+@@ -4,11 +4,11 @@ description: 'Tools to assist in developing and running migrations.'
+ package: Migration
+ # core: 8.x
+ dependencies:
+-  - system (>=8.1)
+-  - migrate_plus
++  - drupal:migrate (>=8.3)
++  - migrate_plus:migrate_plus
+ 
+-# Information added by Drupal.org packaging script on 2016-05-05
+-version: '8.x-2.0-beta1'
++# Information added by Drupal.org packaging script on 2017-05-10
++version: '8.x-4.0-beta1'
+ core: '8.x'
+ project: 'migrate_tools'
+-datestamp: 1462489459
++datestamp: 1494450194
+diff --git a/modules/contrib/migrate_tools/migrate_tools.links.action.yml b/modules/contrib/migrate_tools/migrate_tools.links.action.yml
+index 04b0e53..869297c 100644
+--- a/modules/contrib/migrate_tools/migrate_tools.links.action.yml
++++ b/modules/contrib/migrate_tools/migrate_tools.links.action.yml
+@@ -4,8 +4,8 @@ migrate_tools.add_group_action:
+   appears_on:
+     - entity.migration_group.list
+ 
+-migrate_tools.add_migration_action:
+-  route_name: entity.migration.add_form
+-  title: 'Add migration'
+-  appears_on:
+-    - entity.migration.list
++#migrate_tools.add_migration_action:
++#  route_name: entity.migration.add_form
++#  title: 'Add migration'
++#  appears_on:
++#    - entity.migration.list
+diff --git a/modules/contrib/migrate_tools/migrate_tools.module b/modules/contrib/migrate_tools/migrate_tools.module
+index 4adb555..5a93e84 100644
+--- a/modules/contrib/migrate_tools/migrate_tools.module
++++ b/modules/contrib/migrate_tools/migrate_tools.module
+@@ -6,9 +6,9 @@
+  */
+ 
+ /**
+- * Implements hook_entity_type_alter().
++ * Implements hook_entity_type_build().
+  */
+-function migrate_tools_entity_type_alter(array &$entity_types) {
++function migrate_tools_entity_type_build(array &$entity_types) {
+   // Inject our UI into the general migration and migration group config entities.
+   /** @var \Drupal\Core\Config\Entity\ConfigEntityType[] $entity_types */
+   $entity_types['migration']
+diff --git a/modules/contrib/migrate_tools/migrate_tools.routing.yml b/modules/contrib/migrate_tools/migrate_tools.routing.yml
+index 7bf48db..b12735a 100644
+--- a/modules/contrib/migrate_tools/migrate_tools.routing.yml
++++ b/modules/contrib/migrate_tools/migrate_tools.routing.yml
+@@ -44,17 +44,47 @@ entity.migration.list:
+     _permission: 'administer migrations'
+ 
+ # This is the router item for adding our migration entity.
+-entity.migration.add_form:
+-  path: '/admin/structure/migrate/manage/{migration_group}/migrations/add'
++#entity.migration.add_form:
++#  path: '/admin/structure/migrate/manage/{migration_group}/migrations/add'
++#  defaults:
++#    _title: 'Add migration'
++#    _entity_form: migration.add
++#  requirements:
++#    _entity_create_access: migration
++
++# This is the router item for viewing our migration entity.
++entity.migration.overview:
++  path: '/admin/structure/migrate/manage/{migration_group}/migrations/{migration}'
+   defaults:
+-    _title: 'Add migration'
+-    _entity_form: migration.add
++    _controller: '\Drupal\migrate_tools\Controller\MigrationController::overview'
++    _title: 'Migration overview'
+   requirements:
+-    _entity_create_access: migration
++    _permission: 'administer migrations'
++entity.migration.source:
++  path: '/admin/structure/migrate/manage/{migration_group}/migrations/{migration}/source'
++  defaults:
++    _controller: '\Drupal\migrate_tools\Controller\MigrationController::source'
++    _title: 'Source'
++  requirements:
++    _permission: 'administer migrations'
++entity.migration.process:
++  path: '/admin/structure/migrate/manage/{migration_group}/migrations/{migration}/process'
++  defaults:
++    _controller: '\Drupal\migrate_tools\Controller\MigrationController::process'
++    _title: 'Process'
++  requirements:
++    _permission: 'administer migrations'
++entity.migration.destination:
++  path: '/admin/structure/migrate/manage/{migration_group}/migrations/{migration}/destination'
++  defaults:
++    _controller: '\Drupal\migrate_tools\Controller\MigrationController::destination'
++    _title: 'Destination'
++  requirements:
++    _permission: 'administer migrations'
+ 
+ # This is the router item for editing our migration entity.
+ entity.migration.edit_form:
+-  path: '/admin/structure/migrate/manage/{migration_group}/migrations/{migration}'
++  path: '/admin/structure/migrate/manage/{migration_group}/migrations/{migration}/edit'
+   defaults:
+     _title: 'Edit migration'
+     _entity_form: migration.edit
+diff --git a/modules/contrib/migrate_tools/src/Controller/MessageController.php b/modules/contrib/migrate_tools/src/Controller/MessageController.php
+index 54a194f..438fb16 100644
+--- a/modules/contrib/migrate_tools/src/Controller/MessageController.php
++++ b/modules/contrib/migrate_tools/src/Controller/MessageController.php
+@@ -6,7 +6,7 @@
+ use Drupal\Core\Controller\ControllerBase;
+ use Drupal\Core\Database\Connection;
+ use Drupal\migrate\Plugin\MigrationInterface;
+-use Drupal\migrate_plus\Plugin\MigrationConfigEntityPluginManager;
++use Drupal\migrate\Plugin\MigrationPluginManagerInterface;
+ use Symfony\Component\DependencyInjection\ContainerInterface;
+ 
+ /**
+@@ -26,15 +26,14 @@ class MessageController extends ControllerBase {
+    *
+    * @var \Drupal\migrate_plus\Plugin\MigrationConfigEntityPluginManager
+    */
+-  protected $migrationConfigEntityPluginManager;
++  protected $migrationPluginManager;
+ 
+   /**
+    * {@inheritdoc}
+    */
+   public static function create(ContainerInterface $container) {
+     return new static(
+-      $container->get('database'),
+-      $container->get('plugin.manager.config_entity_migration')
++        $container->get('database'), $container->get('plugin.manager.migration')
+     );
+   }
+ 
+@@ -43,12 +42,12 @@ public static function create(ContainerInterface $container) {
+    *
+    * @param \Drupal\Core\Database\Connection $database
+    *   A database connection.
+-   * @param \Drupal\migrate_plus\Plugin\MigrationConfigEntityPluginManager $migration_config_entity_plugin_manager
+-   *   The plugin manager for config entity-based migrations.
++   * @param \Drupal\migrate\Plugin\MigrationPluginManagerInterface $migration_plugin_manager
++   *   The migration plugin manager.
+    */
+-  public function __construct(Connection $database, MigrationConfigEntityPluginManager $migration_config_entity_plugin_manager) {
++  public function __construct(Connection $database, MigrationPluginManagerInterface $migration_plugin_manager) {
+     $this->database = $database;
+-    $this->migrationConfigEntityPluginManager = $migration_config_entity_plugin_manager;
++    $this->migrationPluginManager = $migration_plugin_manager;
+   }
+ 
+   /**
+@@ -84,7 +83,7 @@ public function overview($migration_group, $migration) {
+     $rows = [];
+     $classes = static::getLogLevelClassMap();
+     /** @var MigrationInterface $migration */
+-    $migration = $this->migrationConfigEntityPluginManager->createInstance($migration);
++    $migration = $this->migrationPluginManager->createInstance($migration);
+     $source_id_field_names = array_keys($migration->getSourcePlugin()->getIds());
+     $column_number = 1;
+     foreach ($source_id_field_names as $source_id_field_name) {
+@@ -107,15 +106,15 @@ public function overview($migration_group, $migration) {
+     $message_table = $migration->getIdMap()->messageTableName();
+     $map_table = $migration->getIdMap()->mapTableName();
+     $query = $this->database->select($message_table, 'msg')
+-      ->extend('\Drupal\Core\Database\Query\PagerSelectExtender')
+-      ->extend('\Drupal\Core\Database\Query\TableSortExtender');
++        ->extend('\Drupal\Core\Database\Query\PagerSelectExtender')
++        ->extend('\Drupal\Core\Database\Query\TableSortExtender');
+     $query->innerJoin($map_table, 'map', 'msg.source_ids_hash=map.source_ids_hash');
+     $query->fields('msg');
+     $query->fields('map');
+     $result = $query
+-      ->limit(50)
+-      ->orderByHeader($header)
+-      ->execute();
++        ->limit(50)
++        ->orderByHeader($header)
++        ->execute();
+ 
+     foreach ($result as $message_row) {
+       $column_number = 1;
+diff --git a/modules/contrib/migrate_tools/src/Controller/MigrationListBuilder.php b/modules/contrib/migrate_tools/src/Controller/MigrationListBuilder.php
+index 3f840eb..3c053f0 100644
+--- a/modules/contrib/migrate_tools/src/Controller/MigrationListBuilder.php
++++ b/modules/contrib/migrate_tools/src/Controller/MigrationListBuilder.php
+@@ -8,10 +8,10 @@
+ use Drupal\Core\Entity\EntityStorageInterface;
+ use Drupal\Core\Entity\EntityTypeInterface;
+ use Drupal\Core\Routing\CurrentRouteMatch;
+-use Drupal\migrate_plus\Plugin\MigrationConfigEntityPluginManager;
++use Drupal\migrate\Plugin\MigrationPluginManagerInterface;
++use Drupal\migrate_plus\Entity\MigrationGroup;
+ use Drupal\Core\Url;
+ use Symfony\Component\DependencyInjection\ContainerInterface;
+-use Drupal\Core\Datetime\DateFormatter;
+ 
+ /**
+  * Provides a listing of migration entities in a given group.
+@@ -32,9 +32,9 @@ class MigrationListBuilder extends ConfigEntityListBuilder implements EntityHand
+   /**
+    * Plugin manager for migration plugins.
+    *
+-   * @var \Drupal\migrate_plus\Plugin\MigrationConfigEntityPluginManager
++   * @var \Drupal\migrate\Plugin\MigrationPluginManagerInterface
+    */
+-  protected $migrationConfigEntityPluginManager;
++  protected $migrationPluginManager;
+ 
+   /**
+    * Constructs a new EntityListBuilder object.
+@@ -45,13 +45,13 @@ class MigrationListBuilder extends ConfigEntityListBuilder implements EntityHand
+    *   The entity storage class.
+    * @param \Drupal\Core\Routing\CurrentRouteMatch $current_route_match
+    *   The current route match service.
+-   * @param \Drupal\migrate_plus\Plugin\MigrationConfigEntityPluginManager $migration_config_entity_plugin_manager
++   * @param \Drupal\migrate\Plugin\MigrationPluginManagerInterface $migration_plugin_manager
+    *   The plugin manager for config entity-based migrations.
+    */
+-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, CurrentRouteMatch $current_route_match, MigrationConfigEntityPluginManager $migration_config_entity_plugin_manager) {
++   public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, CurrentRouteMatch $current_route_match, MigrationPluginManagerInterface $migration_plugin_manager) {
+     parent::__construct($entity_type, $storage);
+     $this->currentRouteMatch = $current_route_match;
+-    $this->migrationConfigEntityPluginManager = $migration_config_entity_plugin_manager;
++     $this->migrationPluginManager = $migration_plugin_manager;
+   }
+ 
+   /**
+@@ -62,17 +62,44 @@ public static function createInstance(ContainerInterface $container, EntityTypeI
+       $entity_type,
+       $container->get('entity.manager')->getStorage($entity_type->id()),
+       $container->get('current_route_match'),
+-      $container->get('plugin.manager.config_entity_migration')
++      $container->get('plugin.manager.migration')
+     );
+   }
+ 
+   /**
++   * Retrieve the migrations belonging to the appropriate group.
++   *
++   * @return array
++   *   An array of entity IDs.
++   */
++  protected function getEntityIds() {
++    $migration_group = $this->currentRouteMatch->getParameter('migration_group');
++
++    $query = $this->getStorage()->getQuery()
++      ->sort($this->entityType->getKey('id'));
++
++    $migration_groups = MigrationGroup::loadMultiple();
++
++    if (array_key_exists($migration_group, $migration_groups)) {
++      $query->condition('migration_group', $migration_group);
++    }
++    else {
++      $query->notExists('migration_group');
++    }
++    // Only add the pager if a limit is specified.
++    if ($this->limit) {
++      $query->pager($this->limit);
++    }
++    return $query->execute();
++  }
++
++  /**
+    * Builds the header row for the entity listing.
+    *
+    * @return array
+    *   A render array structure of header strings.
+    *
+-   * @see Drupal\Core\Entity\EntityListController::render()
++   *  @see \Drupal\Core\Entity\EntityListController::render()
+    */
+   public function buildHeader() {
+     $header['label'] = $this->t('Migration');
+@@ -89,7 +116,7 @@ public function buildHeader() {
+   /**
+    * Builds a row for a migration plugin.
+    *
+-   * @param \Drupal\Core\Entity\EntityInterface $migration
++   * @param \Drupal\Core\Entity\EntityInterface $migration_entity
+    *   The migration plugin for which to build the row.
+    *
+    * @return array
+@@ -98,8 +125,22 @@ public function buildHeader() {
+    * @see Drupal\Core\Entity\EntityListController::render()
+    */
+   public function buildRow(EntityInterface $migration_entity) {
+-    $migration = $this->migrationConfigEntityPluginManager->createInstance($migration_entity->id());
+-    $row['label'] = $migration->label();
++    $migration = $this->migrationPluginManager->createInstance($migration_entity->id());
++    $migration_group = $migration->get('migration_group');
++    if (!$migration_group) {
++      $migration_group = 'default';
++    }
++    $route_parameters = array(
++      'migration_group' => $migration_group,
++      'migration' => $migration->id(),
++    );
++    $row['label'] = array(
++      'data' => array(
++        '#type' => 'link',
++        '#title' => $migration->label(),
++        '#url' => Url::fromRoute("entity.migration.overview", $route_parameters),
++      ),
++    );
+     $row['machine_name'] = $migration->id();
+     $row['status'] = $migration->getStatusLabel();
+ 
+@@ -116,14 +157,6 @@ public function buildRow(EntityInterface $migration_entity) {
+     else {
+       $row['unprocessed'] = $row['total'] - $map->processedCount();
+     }
+-    $migration_group = $migration->get('migration_group');
+-    if (!$migration_group) {
+-      $migration_group = 'default';
+-    }
+-    $route_parameters = array(
+-      'migration_group' => $migration_group,
+-      'migration' => $migration->id()
+-    );
+     $row['messages'] = array(
+       'data' => array(
+         '#type' => 'link',
+@@ -142,7 +175,7 @@ public function buildRow(EntityInterface $migration_entity) {
+     else {
+       $row['last_imported'] = '';
+     }
+-    return $row + parent::buildRow($migration_entity);
++    return $row; // + parent::buildRow($migration_entity);
+   }
+ 
+   /**
+diff --git a/modules/contrib/migrate_tools/src/DrushLogMigrateMessage.php b/modules/contrib/migrate_tools/src/DrushLogMigrateMessage.php
+index 6c4a5ed..9ed1d9f 100644
+--- a/modules/contrib/migrate_tools/src/DrushLogMigrateMessage.php
++++ b/modules/contrib/migrate_tools/src/DrushLogMigrateMessage.php
+@@ -1,10 +1,5 @@
+ <?php
+ 
+-/**
+- * @file
+- * Contains \Drupal\migrate_tools\DrushLogMigrateMessage.
+- */
+-
+ namespace Drupal\migrate_tools;
+ 
+ use Drupal\migrate\MigrateMessageInterface;
+diff --git a/modules/contrib/migrate_tools/src/Form/MigrationDeleteForm.php b/modules/contrib/migrate_tools/src/Form/MigrationDeleteForm.php
+index c24ea05..b28fa9b 100644
+--- a/modules/contrib/migrate_tools/src/Form/MigrationDeleteForm.php
++++ b/modules/contrib/migrate_tools/src/Form/MigrationDeleteForm.php
+@@ -44,7 +44,7 @@ public function getConfirmText() {
+    *   The URL to go to if the user cancels the deletion.
+    */
+   public function getCancelUrl() {
+-    return new Url('entity.migration.list', array('migration_group' => $this->entity->get('migration_group')));
++    return new Url('entity.migration_group.list');
+   }
+ 
+   /**
+@@ -65,8 +65,7 @@ public function submitForm(array &$form, FormStateInterface $form_state) {
+     )));
+ 
+     // Redirect the user to the list controller when complete.
+-    $form_state->setRedirectUrl($this->getCancelUrl(),
+-          array('migration_group' => $this->entity->get('migration_group')));
++    $form_state->setRedirectUrl($this->getCancelUrl());
+   }
+ 
+ }
+diff --git a/modules/contrib/migrate_tools/src/Form/MigrationEditForm.php b/modules/contrib/migrate_tools/src/Form/MigrationEditForm.php
+index df4e916..144c747 100644
+--- a/modules/contrib/migrate_tools/src/Form/MigrationEditForm.php
++++ b/modules/contrib/migrate_tools/src/Form/MigrationEditForm.php
+@@ -33,9 +33,6 @@ public function actions(array $form, FormStateInterface $form_state) {
+     $actions = parent::actions($form, $form_state);
+     $actions['submit']['#value'] = t('Update Migration');
+ 
+-    // Add the group parameter to the delete URL.
+-    $this->addGroupParameter($actions['delete']['#url'], $this->getEntity()->get('migration_group'));
+-
+     return $actions;
+   }
+ 
+diff --git a/modules/contrib/migrate_tools/src/MigrateExecutable.php b/modules/contrib/migrate_tools/src/MigrateExecutable.php
+index e6f0139..e7437a7 100644
+--- a/modules/contrib/migrate_tools/src/MigrateExecutable.php
++++ b/modules/contrib/migrate_tools/src/MigrateExecutable.php
+@@ -1,10 +1,5 @@
+ <?php
+ 
+-/**
+- * @file
+- * Contains \Drupal\migrate_tools\MigrateExecutable.
+- */
+-
+ namespace Drupal\migrate_tools;
+ 
+ use Drupal\migrate\Event\MigratePreRowSaveEvent;
+@@ -99,6 +94,9 @@ public function __construct(MigrationInterface $migration, MigrateMessageInterfa
+     }
+     if (isset($options['idlist'])) {
+       $this->idlist = explode(',', $options['idlist']);
++      array_walk($this->idlist , function(&$value, $key) {
++        $value = explode(':', $value);
++      });
+     }
+ 
+     $this->listeners[MigrateEvents::MAP_SAVE] = [$this, 'onMapSave'];
+@@ -334,10 +332,22 @@ public function onPostRowDelete(MigrateRowDeleteEvent $event) {
+    *
+    */
+   public function onPrepareRow(MigratePrepareRowEvent $event) {
+-    if ($this->idlist) {
++    if (!empty($this->idlist)) {
+       $row = $event->getRow();
+-      $source_id = $row->getSourceIdValues();
+-      if (!in_array(reset($source_id), $this->idlist)) {
++      /**
++       * @TODO replace for $source_id = $row->getSourceIdValues(); when https://www.drupal.org/node/2698023 is fixed
++       */
++      $migration = $event->getMigration();
++      $source_id = array_merge(array_flip(array_keys($migration->getSourcePlugin()
++        ->getIds())), $row->getSourceIdValues());
++      $skip = TRUE;
++      foreach ($this->idlist as $item) {
++        if (array_values($source_id) == $item) {
++          $skip = FALSE;
++          break;
++        }
++      }
++      if ($skip) {
+         throw new MigrateSkipRowException(NULL, FALSE);
+       }
+     }
+@@ -346,7 +356,7 @@ public function onPrepareRow(MigratePrepareRowEvent $event) {
+       $this->resetCounters();
+     }
+     $this->counter++;
+-    if ($this->itemLimit && $this->counter >= $this->itemLimit) {
++    if ($this->itemLimit && ($this->getProcessedCount() + 1) >= $this->itemLimit) {
+       $event->getMigration()->interruptMigration(MigrationInterface::RESULT_COMPLETED);
+     }
+ 
