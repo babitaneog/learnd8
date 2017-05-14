@@ -1,0 +1,5 @@
+name: Demo Content Entity
+type: module
+description: Demonstrates the creation of a custom Content Entity
+core: 8.x
+package: Custom

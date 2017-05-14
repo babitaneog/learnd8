@@ -1,0 +1,12 @@
+demo_entity_type.ann_site.*:
+  type: config_entity
+  label: 'Site Announcement config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string

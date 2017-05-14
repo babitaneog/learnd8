@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * @file
+ * Contains sr_demo_angjs.module.
+ */
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function sr_demo_angjs_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the sr_demo_angjs module.
+    case 'help.page.sr_demo_angjs':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Example module with AngularJS') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_preprocess_html().
+ */
+function sr_demo_angjs_preprocess_html(&$variables) {
+  $variables['html_attributes']['ng-app'] = '';
+}

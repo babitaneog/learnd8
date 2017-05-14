@@ -1,0 +1,6 @@
+entity.ann_site.add_form:
+  route_name: 'entity.ann_site.add_form'
+  title: 'Add Site Announcement'
+  appears_on:
+    - entity.ann_site.collection
+

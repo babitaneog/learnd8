@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains demo_composer_lib.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function demo_composer_lib_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the demo_composer_lib module.
+    case 'help.page.demo_composer_lib':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Demonstrates how to use composer to install external libraries') . '</p>';
+      return $output;
+
+    default:
+  }
+}

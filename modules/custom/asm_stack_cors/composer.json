@@ -1,0 +1,11 @@
+{
+  "name": "drupal/asm_stack_cors",
+  "type": "drupal-module",
+  "description": "Implements stack middleware Stack/Cors",
+  "license": "GPL-2.0+",
+  "require": {
+    "asm89/stack-cors": "^0.2.1",
+    "archwisp/php-encrypt-data" : "1.1.0"
+  },
+  "minimum-stability": "dev"
+}

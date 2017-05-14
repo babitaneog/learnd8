@@ -1,0 +1,14 @@
+{
+  "name": "drupal/sr_configuration_form_demo",
+  "type": "drupal-module",
+  "description": "Demonstrates creation of a custom configuration form.",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/sr_configuration_form_demo",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/sr_configuration_form_demo",
+    "source": "http://cgit.drupalcode.org/sr_configuration_form_demo"
+  },
+  "require": { }
+}

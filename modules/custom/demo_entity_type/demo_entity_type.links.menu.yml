@@ -1,0 +1,9 @@
+
+# Site Announcement menu items definition
+entity.ann_site.collection:
+  title: 'Site Announcement'
+  route_name: entity.ann_site.collection
+  description: 'List Site Announcement (bundles)'
+  parent: system.admin_structure
+  weight: 99
+

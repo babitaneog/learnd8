@@ -1,0 +1,8 @@
+
+test_composer.default_controller_general:
+  path: '/test/composer'
+  defaults:
+    _controller: '\Drupal\test_composer\Controller\DefaultController::general'
+    _title: 'Testing Composer with a sample package'
+  requirements:
+    _permission: 'administer blocks'

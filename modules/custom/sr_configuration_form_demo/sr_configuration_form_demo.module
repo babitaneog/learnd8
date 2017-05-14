@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * @file
+ * Contains sr_configuration_form_demo.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function sr_configuration_form_demo_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the sr_configuration_form_demo module.
+    case 'help.page.sr_configuration_form_demo':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Demonstrates creation of a custom configuration form.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+/**
+ * Implements hook_theme().
+ */
+function sr_configuration_form_demo_theme($existing, $type, $theme, $path) {
+  return [
+    'my_custom_config' => [
+      'variables' => ['markup_text' => NULL],
+    ],
+  ];
+}

@@ -1,0 +1,7 @@
+sr_configuration_form_demo.my_config_form:
+  title: 'My Custom Config'
+  route_name: sr_configuration_form_demo.my_config_form
+  description: 'A demo for my custom config form'
+  parent: system.admin_config_system
+  weight: 99
+

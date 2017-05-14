@@ -1,0 +1,4 @@
+sr_configuration_form_demo:
+  title: 'This is a test title'
+  category: 'food'
+  are_you_interested: 'no'

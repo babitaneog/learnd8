@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains asm_stack_cors.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function asm_stack_cors_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the asm_stack_cors module.
+    case 'help.page.asm_stack_cors':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Adds CORS support to Drupal via the asm89/stack-cors') . '</p>';
+      return $output;
+
+    default:
+  }
+}
