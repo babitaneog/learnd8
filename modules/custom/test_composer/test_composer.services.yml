@@ -1,5 +1,0 @@
-services:
-  test_composer.listbooks:
-    class: Drupal\test_composer\ListBooks
-    arguments: []
-

@@ -9,7 +9,8 @@
         "drupal/console": "~1.0",
         "asm89/stack-cors": "^1.1",
         "archwisp/php-encrypt-data" : "1.1.0",
-        "drupal/core": "~8.3"
+        "drupal/core": "~8.3",
+        "drupal/migrate_tools": "^2.0"
     },
     "replace": {
         "drupal/demo_composer_lib": "8.*"

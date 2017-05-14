@@ -6,3 +6,4 @@ test_composer.default_controller_general:
     _title: 'Testing Composer with a sample package'
   requirements:
     _permission: 'administer blocks'
+
