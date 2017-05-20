@@ -1,0 +1,7 @@
+service_dependency_injection_dem.demo_service_route:
+  path: '/demo-service'
+  defaults:
+    _controller: '\Drupal\service_dependency_injection_dem\Controller\DemoController::demo'
+    _title: 'Service & Dependency Injection Demo'
+  requirements:
+    _permission: 'access content'

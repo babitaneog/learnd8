@@ -1,0 +1,27 @@
+uuid: dc1e0185-9e81-428b-9630-2d2729aca9ce
+langcode: en
+status: true
+dependencies:
+  module:
+    - comment
+    - options
+id: comment.field_like_it_
+field_name: field_like_it_
+entity_type: comment
+type: list_integer
+settings:
+  allowed_values:
+    -
+      value: 1
+      label: 'Yes'
+    -
+      value: 0
+      label: 'No'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

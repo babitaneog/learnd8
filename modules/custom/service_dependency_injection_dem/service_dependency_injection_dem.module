@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains service_dependency_injection_dem.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function service_dependency_injection_dem_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the service_dependency_injection_dem module.
+    case 'help.page.service_dependency_injection_dem':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Creates a Service, Service container and Dependency Injection Demo') . '</p>';
+      return $output;
+
+    default:
+  }
+}

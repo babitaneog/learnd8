@@ -1,0 +1,5 @@
+name: Service & Dependency Injection Demo
+type: module
+description: Creates a Service, Service container and Dependency Injection Demo
+core: 8.x
+package: Custom

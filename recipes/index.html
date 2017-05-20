@@ -1,0 +1,15 @@
+<!doctype html>
+<html ng-app>
+  <head>
+    <title>Recipes</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
+    <script src="recipe.js"></script>
+  </head>
+
+  <body>
+    <div ng-controller="Recipe">
+      <h1>{{recipes.recipe_name}}</h1>
+      <p>{{recipes.instructions}}</p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+uuid: 8941ca40-5211-414e-95ce-d46dc48fa153
+langcode: en
+status: true
+dependencies:
+  module:
+    - demo_composer_lib
+  theme:
+    - mytheme
+id: mytheme_forecastlocationblock
+theme: mytheme
+region: header
+weight: 0
+provider: null
+plugin: forecast_loc_block
+settings:
+  id: forecast_loc_block
+  label: 'Forecast Location Block'
+  provider: demo_composer_lib
+  label_display: visible
+  location_coordinates_latitude: '28.4595'
+  location_coordinates_longitude: '77.0266'
+visibility: {  }

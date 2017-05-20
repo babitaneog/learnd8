@@ -1,0 +1,20 @@
+uuid: 13298567-56f2-4f4f-a06a-a470a8d4ce70
+langcode: en
+status: true
+dependencies:
+  module:
+    - comment
+    - node
+id: node.field_demo_review
+field_name: field_demo_review
+entity_type: node
+type: comment
+settings:
+  comment_type: demo_review
+module: comment
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

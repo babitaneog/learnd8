@@ -1,0 +1,20 @@
+uuid: a80308ab-8dcd-47a3-8917-e7f2e067920d
+langcode: en
+status: true
+dependencies:
+  module:
+    - sr_demo_angjs
+  theme:
+    - bartik
+id: angularjsblock
+theme: bartik
+region: sidebar_first
+weight: 0
+provider: null
+plugin: sr_demo_angjs_angular_block
+settings:
+  id: sr_demo_angjs_angular_block
+  label: 'AngularJS Block'
+  provider: sr_demo_angjs
+  label_display: visible
+visibility: {  }

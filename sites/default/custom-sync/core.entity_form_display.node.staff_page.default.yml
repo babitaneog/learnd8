@@ -4,8 +4,13 @@ status: true
 dependencies:
   config:
     - field.field.node.staff_page.body
+    - field.field.node.staff_page.field_demo_review
+    - field.field.node.staff_page.field_image_demo
+    - field.field.node.staff_page.field_staffing
     - node.type.staff_page
   module:
+    - comment
+    - file_entity
     - path
     - text
 id: node.staff_page.default
@@ -28,6 +33,28 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_demo_review:
+    weight: 33
+    settings: {  }
+    third_party_settings: {  }
+    type: comment_default
+    region: content
+  field_image_demo:
+    weight: 32
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_editable
+    region: content
+  field_staffing:
+    weight: 34
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
   path:
     type: path
     weight: 30

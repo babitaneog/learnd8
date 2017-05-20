@@ -1,0 +1,19 @@
+uuid: efcd5a07-c82c-4111-bd36-a885069bd820
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_recipeyield
+    - node.type.recipe
+id: node.recipe.field_recipeyield
+field_name: field_recipeyield
+entity_type: node
+bundle: recipe
+label: recipeYield
+description: 'The quantity produced by the recipe (for example, number of people served, number of servings, and so on).'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
