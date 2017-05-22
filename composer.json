@@ -16,7 +16,10 @@
         "drupal/views_slideshow": "^4.4",
         "drupal/panels": "^4.1",
         "drupal/restui": "^1.14",
-        "drupal/admin_toolbar": "^1.19"
+        "drupal/admin_toolbar": "^1.19",
+        "drupal/masquerade": "^2.0@beta",
+        "drupal/search_api": "^1.1",
+        "drupal/search_api_solr": "^1.0@RC"
     },
     "replace": {
         "drupal/demo_composer_lib": "8.*"
