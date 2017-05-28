@@ -1,0 +1,22 @@
+uuid: 8dba53c6-0561-47ae-aa70-d262d4abecfd
+langcode: en
+status: true
+dependencies:
+  config:
+    - facets.facet.title
+  module:
+    - facets
+  theme:
+    - bartik
+id: title
+theme: bartik
+region: sidebar_first
+weight: 0
+provider: null
+plugin: 'facet_block:title'
+settings:
+  id: 'facet_block:title'
+  label: Title
+  provider: facets
+  label_display: visible
+visibility: {  }

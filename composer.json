@@ -19,7 +19,9 @@
         "drupal/admin_toolbar": "^1.19",
         "drupal/masquerade": "^2.0@beta",
         "drupal/search_api": "^1.1",
-        "drupal/search_api_solr": "^1.0@RC"
+        "drupal/search_api_solr": "^1.0@RC",
+        "drupal/search_api_exclude_entity": "^1.0@alpha",
+        "drupal/facets": "^1.0@alpha"
     },
     "replace": {
         "drupal/demo_composer_lib": "8.*"

@@ -6,6 +6,7 @@ dependencies:
     - core.entity_view_display.comment.comment.default
     - field.field.node.article.body
     - field.field.node.article.comment
+    - field.field.node.article.field_exclude_from_search
     - field.field.node.article.field_image
     - field.field.node.article.field_tags
     - image.style.large
@@ -13,6 +14,7 @@ dependencies:
   module:
     - comment
     - image
+    - search_api_exclude_entity
     - text
     - user
 _core:
@@ -38,6 +40,16 @@ content:
       view_mode: default
       pager_id: 0
     third_party_settings: {  }
+  field_exclude_from_search:
+    weight: 6
+    label: above
+    settings:
+      format: yes-no
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: search_api_exclude_entity_formatter
+    region: content
   field_image:
     type: image
     weight: 0

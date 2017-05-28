@@ -1,6 +1,7 @@
 module:
   action: 0
   admin_toolbar: 0
+  admin_toolbar_tools: 0
   asm_stack_cors: 0
   automated_cron: 0
   basic_auth: 0
@@ -28,6 +29,8 @@ module:
   dynamic_page_cache: 0
   editor: 0
   examples: 0
+  facets: 0
+  facets_range_widget: 0
   field: 0
   field_ui: 0
   file: 0
@@ -39,6 +42,7 @@ module:
   image: 0
   kint: 0
   link: 0
+  masquerade: 0
   menu_ui: 0
   migrate: 0
   migrate_example: 0
@@ -57,7 +61,13 @@ module:
   rdf: 0
   rest: 0
   restui: 0
-  search: 0
+  search_api: 0
+  search_api_db: 0
+  search_api_db_defaults: 0
+  search_api_exclude_entity: 0
+  search_api_solr: 0
+  search_api_solr_defaults: 0
+  search_api_views_taxonomy: 0
   serialization: 0
   service_dependency_injection_dem: 0
   shortcut: 0
@@ -78,7 +88,6 @@ module:
   views_slideshow: 0
   views_slideshow_cycle: 0
   views_ui: 0
-  webprofiler: 0
   menu_link_content: 1
   views: 10
   standard: 1000

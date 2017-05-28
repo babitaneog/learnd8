@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.article.body
     - field.field.node.article.comment
+    - field.field.node.article.field_exclude_from_search
     - field.field.node.article.field_image
     - field.field.node.article.field_tags
     - image.style.thumbnail
@@ -13,6 +14,7 @@ dependencies:
     - comment
     - image
     - path
+    - search_api_exclude_entity
     - text
 _core:
   default_config_hash: N8YzXGJXPIvh1OPpjuLH_XDvPwWBpKnTx0GwAvgU0Rg
@@ -42,6 +44,13 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_exclude_from_search:
+    weight: 31
+    settings:
+      field_label: 'Yes, exclude this entity from the search indexes.'
+    third_party_settings: {  }
+    type: search_api_exclude_entity_widget
+    region: content
   field_image:
     type: image_image
     weight: 4
