@@ -1,0 +1,7 @@
+services:
+  sr_events_subscriber_demo.default:
+    class: Drupal\sr_events_subscriber_demo\EventSubscriber\DefaultSubscriber
+    arguments: ['@logger.factory']
+    tags:
+      - { name: event_subscriber }
+
