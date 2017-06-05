@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains sr_events_subscriber_demo.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function sr_events_subscriber_demo_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the sr_events_subscriber_demo module.
+    case 'help.page.sr_events_subscriber_demo':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Demo on how to create an events subscriber') . '</p>';
+      return $output;
+
+    default:
+  }
+}

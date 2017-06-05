@@ -1,0 +1,5 @@
+name: Events Subscriber Demo
+type: module
+description: Demo on how to create an events subscriber
+core: 8.x
+package: Custom
