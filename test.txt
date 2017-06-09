@@ -1,0 +1,2 @@
+Babita testing git merge conflict using opendiff tool - added on same line.
+Removed garbage content
