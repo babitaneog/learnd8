@@ -1,0 +1,19 @@
+uuid: 45b3de62-eaba-4134-862b-9ebb784b82a4
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - text
+id: node.field_recipeinstructions
+field_name: field_recipeinstructions
+entity_type: node
+type: text_long
+settings: {  }
+module: text
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

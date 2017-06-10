@@ -1,0 +1,23 @@
+uuid: 047cd7c1-0aec-4a86-8543-ed421c4251d5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_preptime
+    - node.type.recipe
+id: node.recipe.field_preptime
+field_name: field_preptime
+entity_type: node
+bundle: recipe
+label: prepTime
+description: 'length of time it takes to prepare the recipe in minutes'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: minute|minutes
+field_type: integer

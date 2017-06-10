@@ -1,0 +1,26 @@
+sr_configuration_form_demo.my_config_form:
+  path: '/admin/config/sr_configuration_form_demo/myconfig'
+  defaults:
+    _form: '\Drupal\sr_configuration_form_demo\Form\MyConfigForm'
+    _title: 'MyConfigForm'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE
+
+
+sr_configuration_form_demo.page_config_controller_hello:
+  path: '/my-custom-config-page'
+  defaults:
+    _controller: '\Drupal\sr_configuration_form_demo\Controller\PageConfigController::hello'
+    _title: 'Settings values from My Custom Config Form'
+  requirements:
+    _permission: 'access content'
+    
+sr_configuration_form_demo.page_config_controller_template:
+  path: '/my-custom-config-page-demo'
+  defaults:
+    _controller: '\Drupal\sr_configuration_form_demo\Controller\PageConfigController::content'
+    _title: 'Settings values from My Custom Config Form'
+  requirements:
+    _permission: 'access content'

@@ -1,0 +1,16 @@
+{
+  "name": "drupal/test_composer",
+  "type": "drupal-module",
+  "description": "Will download a package using composer",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/test_composer",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/test_composer",
+    "source": "http://cgit.drupalcode.org/test_composer"
+  },
+  "require": { 
+    "archwisp/php-encrypt-data": "1.1.0"
+  }
+}

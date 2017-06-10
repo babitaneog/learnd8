@@ -1,0 +1,22 @@
+uuid: 03240cc1-9f08-402d-bdbb-919fc36ba106
+langcode: en
+status: true
+dependencies:
+  module:
+    - demo_composer_lib
+  theme:
+    - bartik
+id: forecastlocationblock
+theme: bartik
+region: featured_top
+weight: 0
+provider: null
+plugin: forecast_loc_block
+settings:
+  id: forecast_loc_block
+  label: 'Forecast Location Block'
+  provider: demo_composer_lib
+  label_display: visible
+  location_coordinates_latitude: '28.4595'
+  location_coordinates_longitude: '77.0266'
+visibility: {  }

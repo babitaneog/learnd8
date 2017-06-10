@@ -1,0 +1,14 @@
+{
+  "name": "drupal/demo_entity_type",
+  "type": "drupal-module",
+  "description": "Demo for creating a custom entity type (Content/Config)",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/demo_entity_type",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/demo_entity_type",
+    "source": "http://cgit.drupalcode.org/demo_entity_type"
+  },
+  "require": { }
+}

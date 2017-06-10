@@ -1,0 +1,5 @@
+name: sr_demo_angjs
+type: module
+description: Example module with AngularJS
+core: 8.x
+package: Custom

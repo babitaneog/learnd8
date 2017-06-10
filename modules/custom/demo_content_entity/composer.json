@@ -1,0 +1,14 @@
+{
+  "name": "drupal/demo_content_entity",
+  "type": "drupal-module",
+  "description": "Demonstrates the creation of a custom Content Entity",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/demo_content_entity",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/demo_content_entity",
+    "source": "http://cgit.drupalcode.org/demo_content_entity"
+  },
+  "require": { }
+}

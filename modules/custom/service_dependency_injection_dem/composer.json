@@ -1,0 +1,14 @@
+{
+  "name": "drupal/service_dependency_injection_dem",
+  "type": "drupal-module",
+  "description": "Creates a Service, Service container and Dependency Injection Demo",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/service_dependency_injection_dem",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/service_dependency_injection_dem",
+    "source": "http://cgit.drupalcode.org/service_dependency_injection_dem"
+  },
+  "require": { }
+}

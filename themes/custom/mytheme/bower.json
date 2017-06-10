@@ -1,0 +1,20 @@
+{
+  "name": "mytheme",
+  "homepage": "https://github.com/babitaneog/learnd8",
+  "authors": [
+    "Babita Neog <bgogoi@sapient.com>"
+  ],
+  "description": "Example theme with semantic UI",
+  "main": "",
+  "license": "GPL",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "semantic": "semantic-ui#^2.2.10"
+  }
+}

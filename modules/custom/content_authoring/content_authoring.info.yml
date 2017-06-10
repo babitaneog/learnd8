@@ -1,0 +1,13 @@
+name: 'Content Authoring'
+description: 'Content Authoring'
+type: module
+core: 8.x
+dependencies:
+  - comment
+  - field
+  - image
+  - node
+  - path
+  - rdf
+  - text
+  - user

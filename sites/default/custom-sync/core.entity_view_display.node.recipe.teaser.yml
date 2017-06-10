@@ -1,0 +1,18 @@
+uuid: 76c7970f-f968-45c7-b503-8a6b65fbf773
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - node.type.recipe
+  module:
+    - user
+id: node.recipe.teaser
+targetEntityType: node
+bundle: recipe
+mode: teaser
+content:
+  links:
+    weight: 100
+    region: content
+hidden: {  }

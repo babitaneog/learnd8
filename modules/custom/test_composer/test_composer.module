@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains test_composer.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function test_composer_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the test_composer module.
+    case 'help.page.test_composer':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Will download a package using composer') . '</p>';
+      return $output;
+
+    default:
+  }
+}

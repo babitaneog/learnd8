@@ -1,0 +1,5 @@
+name: Test Composer
+type: module
+description: Will download a package using composer
+core: 8.x
+package: Custom

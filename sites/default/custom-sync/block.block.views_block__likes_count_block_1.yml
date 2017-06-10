@@ -1,0 +1,33 @@
+uuid: 1f33717c-7798-4156-8d7a-908b6b25a796
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.likes_count
+  module:
+    - node
+    - views
+  theme:
+    - bartik
+id: views_block__likes_count_block_1
+theme: bartik
+region: content
+weight: -5
+provider: null
+plugin: 'views_block:likes_count-block_1'
+settings:
+  id: 'views_block:likes_count-block_1'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+  context_mapping: {  }
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      staff_page: staff_page
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

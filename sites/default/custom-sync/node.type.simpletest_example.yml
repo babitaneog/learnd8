@@ -1,0 +1,13 @@
+uuid: ed110602-ac55-4a2e-94a1-e45335bdbcc2
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: YfEEQIzq0JtkefKCoRWaHj5C2sSHg33DDGWlvBOy2mM
+name: 'SimpleTest Example Node Type'
+type: simpletest_example
+description: 'A content type that exists so we can test it.'
+help: ''
+new_revision: false
+preview_mode: 1
+display_submitted: true

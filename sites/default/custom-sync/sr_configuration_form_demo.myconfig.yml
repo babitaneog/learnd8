@@ -1,0 +1,9 @@
+sr_configuration_form_demo:
+  title: 'This is a test title'
+  category: food
+  are_you_interested: 'no'
+_core:
+  default_config_hash: QcKTMdA3nEtNN1NxsCTvE0Lct7vwWvI89SG44KD_BN0
+title: 'This is a test title hegfwyregf'
+category: professional
+are_you_interested: 'yes'

@@ -1,0 +1,20 @@
+uuid: 39fd5168-603f-4081-a4f3-c7bc6b6415df
+langcode: en
+status: true
+dependencies:
+  module:
+    - nettv
+  theme:
+    - bartik
+id: nettvbasicinfoblock
+theme: bartik
+region: sidebar_first
+weight: 0
+provider: null
+plugin: nettv_basicinfo_block
+settings:
+  id: nettv_basicinfo_block
+  label: 'NetTV BasicInfo Block'
+  provider: nettv
+  label_display: visible
+visibility: {  }

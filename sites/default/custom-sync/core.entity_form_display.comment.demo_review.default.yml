@@ -1,0 +1,39 @@
+uuid: f249cd31-fce5-45e4-9034-843921e17471
+langcode: en
+status: true
+dependencies:
+  config:
+    - comment.type.demo_review
+    - field.field.comment.demo_review.field_e_mail
+    - field.field.comment.demo_review.field_like_it_
+    - field.field.comment.demo_review.field_review
+id: comment.demo_review.default
+targetEntityType: comment
+bundle: demo_review
+mode: default
+content:
+  field_e_mail:
+    type: email_default
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_like_it_:
+    weight: 3
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
+    region: content
+  field_review:
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+hidden:
+  author: true
+  subject: true

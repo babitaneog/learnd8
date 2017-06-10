@@ -1,0 +1,15 @@
+uuid: 621a1bd9-6936-452a-8856-79bf9ebf0472
+langcode: en
+status: true
+dependencies: {  }
+name: small_160x120
+label: Small_160x120
+effects:
+  9ff464c3-140f-44f3-92d4-1810bf39d0cf:
+    uuid: 9ff464c3-140f-44f3-92d4-1810bf39d0cf
+    id: image_scale
+    weight: 1
+    data:
+      width: 160
+      height: 120
+      upscale: false

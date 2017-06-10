@@ -1,0 +1,23 @@
+uuid: 5949de3a-4703-49f7-9d5d-f39ca15252d0
+langcode: en
+status: true
+dependencies:
+  config:
+    - comment.type.demo_review
+    - field.storage.comment.field_like_it_
+  module:
+    - options
+id: comment.demo_review.field_like_it_
+field_name: field_like_it_
+entity_type: comment
+bundle: demo_review
+label: 'Like it?'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings: {  }
+field_type: list_integer

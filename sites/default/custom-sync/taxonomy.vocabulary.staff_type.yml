@@ -1,0 +1,9 @@
+uuid: 5f3648f1-03ae-4d54-a3f2-6386ca4f78f0
+langcode: en
+status: true
+dependencies: {  }
+name: 'Staff Type'
+vid: staff_type
+description: ''
+hierarchy: 0
+weight: 0

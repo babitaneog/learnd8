@@ -1,0 +1,16 @@
+{
+  "name": "drupal/demo_composer_lib",
+  "type": "drupal-module",
+  "description": "Demonstrates how to use composer to install external libraries",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/demo_composer_lib",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/demo_composer_lib",
+    "source": "http://cgit.drupalcode.org/demo_composer_lib"
+  },
+  "require": {
+     "guhelski/forecast-php": "~1.1.1"
+  }
+}

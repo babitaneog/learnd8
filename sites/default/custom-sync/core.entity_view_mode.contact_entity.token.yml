@@ -1,0 +1,10 @@
+uuid: 49100f72-2b55-4c73-9cef-66e4d9f178a3
+langcode: en
+status: true
+dependencies:
+  module:
+    - demo_content_entity
+id: contact_entity.token
+label: Token
+targetEntityType: contact_entity
+cache: true

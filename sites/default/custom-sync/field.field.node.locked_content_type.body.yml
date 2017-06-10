@@ -1,0 +1,24 @@
+uuid: 7df5bc81-1167-41fe-976e-3c40f933ee8f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.locked_content_type
+  module:
+    - text
+_core:
+  default_config_hash: 6iCFI41CQXAyPpK2U7KS9voDGT3r2av5q7YmWPKL4iA
+id: node.locked_content_type.body
+field_name: body
+entity_type: node
+bundle: locked_content_type
+label: Body
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+field_type: text_with_summary

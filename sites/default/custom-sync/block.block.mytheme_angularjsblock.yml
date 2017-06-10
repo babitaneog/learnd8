@@ -1,0 +1,20 @@
+uuid: 5c21b8f4-c54d-4e05-bece-12a011a1966b
+langcode: en
+status: true
+dependencies:
+  module:
+    - sr_demo_angjs
+  theme:
+    - mytheme
+id: mytheme_angularjsblock
+theme: mytheme
+region: header
+weight: 0
+provider: null
+plugin: sr_demo_angjs_angular_block
+settings:
+  id: sr_demo_angjs_angular_block
+  label: 'AngularJS Block'
+  provider: sr_demo_angjs
+  label_display: visible
+visibility: {  }

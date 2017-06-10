@@ -1,0 +1,22 @@
+uuid: 40f78d52-23aa-40ef-8543-3b9f954e507a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_description
+    - node.type.recipe
+  module:
+    - text
+id: node.recipe.field_description
+field_name: field_description
+entity_type: node
+bundle: recipe
+label: description
+description: 'A short description of the item'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: false
+field_type: text_with_summary

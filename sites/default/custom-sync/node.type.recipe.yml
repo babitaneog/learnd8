@@ -1,0 +1,18 @@
+uuid: 06f0595f-eb2f-401b-b625-6798b7a55804
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus:
+      - main
+    parent: 'main:'
+name: Recipe
+type: recipe
+description: 'Simple recipe content type based on the schema.org base HTML5 Microdata schema for Recipes at: http://schema.org/Recipe/.'
+help: ''
+new_revision: true
+preview_mode: 1
+display_submitted: true

@@ -1,0 +1,8 @@
+uuid: 732c5e7f-d96a-4e6b-a3c4-6db9eb0e0368
+langcode: en
+status: true
+dependencies: {  }
+id: demo_review
+label: 'Demo Review'
+target_entity_type_id: node
+description: ''

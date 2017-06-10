@@ -1,0 +1,24 @@
+uuid: 01f229a4-29da-476e-8832-26a0bb29468a
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.random_top_rated_
+  module:
+    - views
+  theme:
+    - bartik
+id: views_block__random_top_rated__block_1
+theme: bartik
+region: sidebar_first
+weight: 0
+provider: null
+plugin: 'views_block:random_top_rated_-block_1'
+settings:
+  id: 'views_block:random_top_rated_-block_1'
+  label: 'Top Rated '
+  provider: views
+  label_display: visible
+  views_label: 'Top Rated '
+  items_per_page: none
+visibility: {  }
