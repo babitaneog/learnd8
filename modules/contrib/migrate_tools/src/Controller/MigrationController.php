@@ -3,11 +3,11 @@
 namespace Drupal\migrate_tools\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\Component\Utility\Xss;
 use Drupal\Component\Utility\Html;
+use Drupal\migrate_plus\Plugin\MigrationConfigEntityPluginManager;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\migrate\Plugin\MigrationInterface;
-use Drupal\migrate\Plugin\MigrationPluginManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -18,17 +18,18 @@ class MigrationController extends ControllerBase implements ContainerInjectionIn
   /**
    * Plugin manager for migration plugins.
    *
-   * @var \Drupal\migrate\Plugin\MigrationPluginManagerInterface
+   * @var \Drupal\migrate_plus\Plugin\MigrationConfigEntityPluginManager
    */
-  protected $migrationPluginManager;
+  protected $migrationConfigEntityPluginManager;
 
   /**
    * Constructs a new MigrationController object.
    *
-   * @param \Drupal\migrate\Plugin\MigrationPluginManagerInterface $migration_plugin_manager.
+   * @param \Drupal\migrate_plus\Plugin\MigrationConfigEntityPluginManager $migration_config_entity_plugin_manager
+   *   The plugin manager for config entity-based migrations.
    */
-  public function __construct(MigrationPluginManagerInterface $migration_plugin_manager) {
-    $this->migrationPluginManager = $migration_plugin_manager;
+  public function __construct(MigrationConfigEntityPluginManager $migration_config_entity_plugin_manager) {
+    $this->migrationConfigEntityPluginManager = $migration_config_entity_plugin_manager;
   }
 
   /**
@@ -36,7 +37,7 @@ class MigrationController extends ControllerBase implements ContainerInjectionIn
    */
   public static function create(ContainerInterface $container) {
     return new static(
-        $container->get('plugin.manager.migration')
+      $container->get('plugin.manager.config_entity_migration')
     );
   }
 
@@ -53,8 +54,8 @@ class MigrationController extends ControllerBase implements ContainerInjectionIn
    */
   public function overview($migration_group, $migration) {
 
-    /** @var \Drupal\migrate\Plugin\MigrationInterface $migration */
-    $migration = $this->migrationPluginManager->createInstance($migration);
+    /** @var MigrationInterface $migration */
+    $migration = $this->migrationConfigEntityPluginManager->createInstance($migration);
 
     $build['overview'] = [
       '#type' => 'fieldset',
@@ -76,7 +77,7 @@ class MigrationController extends ControllerBase implements ContainerInjectionIn
     $migration_dependencies = $migration->getMigrationDependencies();
     if (!empty($migration_dependencies['required'])) {
       $build['overview']['dependencies'] = [
-        '#title' => $this->t('Migration Dependencies'),
+        '#title' => $this->t('Migration Dependencies') ,
         '#markup' => Xss::filterAdmin(implode(', ', $migration_dependencies['required'])),
         '#type' => 'item',
       ];
@@ -105,8 +106,8 @@ class MigrationController extends ControllerBase implements ContainerInjectionIn
    */
   public function source($migration_group, $migration) {
 
-   /** @var \Drupal\migrate\Plugin\MigrationInterface $migration */
-   $migration = $this->migrationPluginManager->createInstance($migration);
+    /** @var MigrationInterface $migration */
+    $migration = $this->migrationConfigEntityPluginManager->createInstance($migration);
 
     // Source field information.
     $build['source'] = [
@@ -157,8 +158,8 @@ class MigrationController extends ControllerBase implements ContainerInjectionIn
    */
   public function process($migration_group, $migration) {
 
-    /** @var \Drupal\migrate\Plugin\MigrationInterface $migration */
-    $migration = $this->migrationPluginManager->createInstance($migration);
+    /** @var MigrationInterface $migration */
+    $migration = $this->migrationConfigEntityPluginManager->createInstance($migration);
 
     // Process information.
     $build['process'] = [
@@ -219,8 +220,8 @@ class MigrationController extends ControllerBase implements ContainerInjectionIn
    *   A render array as expected by drupal_render().
    */
   public function destination($migration_group, $migration) {
-    /** @var \Drupal\migrate\Plugin\MigrationInterface $migration */
-    $migration = $this->migrationPluginManager->createInstance($migration);
+    /** @var MigrationInterface $migration */
+    $migration = $this->migrationConfigEntityPluginManager->createInstance($migration);
 
     // Destination field information.
     $build['destination'] = [

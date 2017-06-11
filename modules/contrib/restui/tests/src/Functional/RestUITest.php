@@ -15,7 +15,7 @@ class RestUITest extends JavascriptTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('node', 'restui');
+  public static $modules = ['node', 'restui'];
 
   /**
    * {@inheritdoc}
@@ -24,7 +24,10 @@ class RestUITest extends JavascriptTestBase {
     parent::setUp();
 
     // Create a user with permissions to manage.
-    $permissions = array('administer site configuration', 'administer rest resources');
+    $permissions = [
+      'administer site configuration',
+      'administer rest resources'
+    ];
     $account = $this->drupalCreateUser($permissions);
 
     // Initiate user session.

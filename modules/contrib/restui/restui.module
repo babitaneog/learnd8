@@ -21,14 +21,14 @@ function restui_help($route_name, RouteMatchInterface $route_match) {
  * Implements hook_theme().
  */
 function restui_theme() {
-  return array(
+  return [
     // List resources.
-    'restui_resource_info' => array(
-      'variables' => array(
-        'granularity' => array(),
-        'configuration' => array(),
-        ),
+    'restui_resource_info' => [
+      'variables' => [
+        'granularity' => [],
+        'configuration' => [],
+      ],
       'template' => 'restui-resource-info',
-    ),
-  );
+    ],
+  ];
 }
