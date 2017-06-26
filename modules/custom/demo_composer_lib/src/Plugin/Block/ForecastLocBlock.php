@@ -23,7 +23,7 @@ class ForecastLocBlock extends BlockBase {
     return [
       'location_coordinates_latitude' => 0,
       'location_coordinates_longitude' => 0,
-        ] + parent::defaultConfiguration();
+    ] + parent::defaultConfiguration();
   }
 
   /**
@@ -37,7 +37,7 @@ class ForecastLocBlock extends BlockBase {
       '#default_value' => $this->configuration['location_coordinates_latitude'],
       '#weight' => '0',
       '#required' => TRUE,
-      '#step' => 0.000001
+      '#step' => 0.000001,
     ];
     $form['location_coordinates_longitude'] = [
       '#type' => 'number',
@@ -46,7 +46,7 @@ class ForecastLocBlock extends BlockBase {
       '#default_value' => $this->configuration['location_coordinates_longitude'],
       '#weight' => '0',
       '#required' => TRUE,
-      '#step' => 0.000001
+      '#step' => 0.000001,
     ];
 
     return $form;
@@ -65,18 +65,19 @@ class ForecastLocBlock extends BlockBase {
    */
   public function build() {
     $forecast = new Forecast('7411b0e6d5e0c99fbd7405fd6de00cd5');
-    // Get the current forecast for a given latitude and longitude
+    // Get the current forecast for a given latitude and longitude.
     $markup_text = $forecast->get($this->configuration['location_coordinates_latitude'], $this->configuration['location_coordinates_longitude']);
-    //echo '<pre>'; var_dump($markup_text); echo '</pre>';
+    // Echo '<pre>'; var_dump($markup_text); echo '</pre>';.
     $forecast_text = $markup_text->currently->summary;
     $ftemp = $markup_text->currently->temperature;
 
     $ftemp_celsius = round(5 * ($ftemp - 32) / 9, 2);
-    
+
     $build = [];
 
-    $build['forecast_markup']['#markup'] = t('Forecast is @forecast with temperature of @temp deg C', array('@forecast' => $forecast_text, '@temp' => $ftemp_celsius));
+    $build['forecast_markup']['#markup'] = t('Forecast is @forecast with temperature of @temp deg C', ['@forecast' => $forecast_text, '@temp' => $ftemp_celsius]);
 
     return $build;
   }
+
 }
